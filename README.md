@@ -32,9 +32,13 @@ lub
 `./automatDoGier -symbole 4,4,6,0,3,6,6,6,6,6,3,2,6,7,4`
 
 wykonanie polecenia poda wygraną za układ
+
 `4,4,6,0,3,
+
 6,6,6,6,6,
+
 3,2,6,7,4`
+
 
 ![alt text](https://github.com/ato-zen/automatDoGier/blob/main/wyniki.png?raw=true)
 
