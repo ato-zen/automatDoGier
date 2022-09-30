@@ -34,9 +34,7 @@ lub
 wykonanie polecenia poda wygraną za układ:
 
 `4,4,6,0,3`
-
 `6,6,6,6,6`
-
 `3,2,6,7,4`
 
 
