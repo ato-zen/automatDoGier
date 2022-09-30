@@ -1,7 +1,7 @@
 # Automat do gier
 Automat do gier, jednoręki bandyta, 777
 
-Automat do gier jest wersją "gry jednorekibandyta przepisaną na C++ z dwudziestoma liniami wygrywającymi
+Automat do gier jest wersją gry [jednorekibandyta](https://github.com/ato-zen/jednoreki-bandyta) napisaną w C++ z dwudziestoma liniami wygrywającymi.  
 "Gra" losuje domyślnie 100 tysięcy wierszy na pięciu bębnach spośród ośmiu symboli/cyfr.
 
 Stawka wynosi 100, kredyt 500 tysięcy
@@ -33,8 +33,8 @@ lub
 
 wykonanie polecenia poda wygraną za układ:
 
-`4,4,6,0,3`
-`6,6,6,6,6`
+`4,4,6,0,3`  
+`6,6,6,6,6`  
 `3,2,6,7,4`
 
 
