@@ -8,7 +8,7 @@
 #include <filesystem>
 #include <string>
 #include <map>
-#include "automatDoGier.h"
+#include "automatDoGier.hpp"
 
 #define SYMBOLE "-symbole"
 #define KREDYT  "-kredyt"
