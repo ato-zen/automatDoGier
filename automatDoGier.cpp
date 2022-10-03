@@ -157,7 +157,7 @@ int obliczWygrana(){
     }
   }
 
-  // nawet jak będzie kilk wygranych traktujemy je jako jedno
+  // nawet kilka trafień traktujemy jak jedną wygraną
   if(hit) hf++;
 
   return razem;
