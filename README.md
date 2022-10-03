@@ -38,9 +38,9 @@ wykonanie polecenia poda wygraną za układ:
 `3,2,6,7,4`
 
 
-![alt text](https://github.com/ato-zen/automatDoGier/blob/main/wyniki.png?raw=true)
+![600x350](https://github.com/ato-zen/automatDoGier/blob/main/wyniki.png)
 
 Przykładowy stan kredytu dla kilku tysięcy gier
 
-![alt text](https://github.com/ato-zen/automatDoGier/blob/main/kredyt.png?raw=true)
+![600x350](https://github.com/ato-zen/automatDoGier/blob/main/kredyt.png)
 
