@@ -231,7 +231,7 @@ int main(int argc , char **argv){
             else tab[k++] = liczba;
           }
 
-          //uporządkowanie w kolejności potrzebnejf do wyliczenia wygranej
+          //uporządkowanie w kolejności potrzebnej do wyliczenia wygranej
           for (size_t i = 0; i < 15; i++) u.b5x3[i] = tab[tp1[i]];
 
           cout << obliczWygrana() << endl;
