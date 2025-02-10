@@ -1,19 +1,19 @@
 #define DB 160
 
-// tabela wypłat dla każdego znaku począwszy od 0 za dwa trafienia
-int stawki[8][5] = {
+// payout table for each symbol starting from 0 for two hits
+int payouts[8][5] = {
 //    x2   x3   x4     x5
-  {0, 25, 100,  250,  1000}, //0 wiśnia
-  {0,  0, 100,  250,  1000}, //1 cytyryna
-  {0,  0, 100,  250,  1000}, //2 pomarańcza
-  {0,  0, 100,  250,  1000}, //3 śliwka
-  {0,  0, 250, 1000,  2500}, //4 winogrona
-  {0,  0, 250, 1000,  2500}, //5 arbuz
-  {0,  0, 500, 5000, 25000}, //6 7-mka
+  {0, 25, 100,  250,  1000}, //0 cherry
+  {0,  0, 100,  250,  1000}, //1 lemon
+  {0,  0, 100,  250,  1000}, //2 orange
+  {0,  0, 100,  250,  1000}, //3 plum
+  {0,  0, 250, 1000,  2500}, //4 grapes
+  {0,  0, 250, 1000,  2500}, //5 watermelon
+  {0,  0, 500, 5000, 25000}, //6 seven
   {0,  0, 200, 1000,  5000}  //7 scatter
 };
-// 5 bębnów po 40 pozycji każdy
-int beben[5][DB] = {
+// 5 reels with 40 positions each
+int reel[5][DB] = {
   {1,6,2,4,4,7,2,0,5,2,0,0,1,4,0,1,0,0,1,3,2,0,6,4,6,2,2,4,4,1,5,3,0,7,3,0,2,5,5,1,
    4,3,3,6,4,2,5,7,0,3,2,1,3,5,2,4,1,1,7,5,0,1,0,3,5,4,2,5,0,2,2,7,6,6,5,3,1,2,3,1,
    3,5,2,0,3,3,0,4,3,3,0,1,6,0,3,1,2,3,6,3,0,2,2,3,1,6,4,5,6,0,5,2,3,0,2,3,2,2,0,1,
@@ -40,15 +40,15 @@ int beben[5][DB] = {
    6,0,4,3,1,3,1,1,6,1,0,4,6,2,3,2,0,2,2,0,1,1,5,6,2,7,0,1,5,7,2,1,4,4,2,2,1,7,4,6}
 };
 
-//kopia bębnów z dwoma dodatkowymi elementami: ostatni na koniec i pierwszy na początek
-int b2[5][DB+2];
+// copy of reels with two additional elements: last at the end and first at the beginning
+int reels2[5][DB+2];
 
-//tabele przestawień
+// permutation tables
 int tp1[15] = {0,5,10,1,6,11,2,7,12,3,8,13,4,9,14};
 int tp2[15] = {0,3,6,9,12,1,4,7,10,13,2,5,8,11,14};
 
-//dwadzieścia wierszy wygrywających
-int w20[20][5] = {
+// twenty winning rows
+int win20[20][5] = {
   {0,3,7,11,14},{0,3,6, 9,12},{0,4,8,10,12},{1,3,7, 9,13},{1,4,7,10,13},
   {1,4,6,10,13},{1,5,7,11,13},{2,4,6,10,14},{2,5,8,11,14},{2,5,7, 9,12},
   {2,5,8,10,12},{2,4,6, 9,12},{0,4,6,10,12},{0,3,7,10,13},{2,4,6,10,13},
