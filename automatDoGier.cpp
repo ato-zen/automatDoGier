@@ -10,251 +10,247 @@
 #include <map>
 #include "automatDoGier.hpp"
 
-#define SYMBOLE "-symbole"
-#define KREDYT  "-kredyt"
-#define BUFOR   "-bufor"
-#define GIER    "-gier"
-#define PLIK    "-plik"
+#define SYMBOLS "-symbols"
+#define CREDIT  "-credit"
+#define BUFFER  "-buffer"
+#define GAMES   "-games"
+#define FILE_ARG "-file"
 
 using namespace std;
-int obliczWygrana();
 
-struct{
-  vector<string> symbole;
+int calculateWin();
+
+struct {
+  vector<string> symbols;
   int b5x3[15];
-  string plik;
-  bool plik_b = false;
-  int bufor = 0;
-  int kredyt = 500000, gier = 100000, stawka = 100, znak[8] = {0,1,2,3,4,5,6,7};
+  string file;
+  bool file_b = false;
+  int buffer = 0;
+  int credit = 500000, games = 100000, bet = 100, symbol[8] = {0,1,2,3,4,5,6,7};
 } u;
 
-unsigned long wygrane[8][5], wiersz[5], wygrywa, trafien, razem, wygranych, rtp, hf;
+unsigned long wins[8][5], row[5], winner, hits, total, totalWins, rtp, hf;
 
-void blad(string blad){ cout<<blad; exit(0); }
+void error(string errorMessage){ cout << errorMessage; exit(0); }
 
-void graj(){
+void play(){
   stringstream ss;
-  ofstream file;
-  int pozycja[5], wygrana;
-  int wierszX3[15];
+  ofstream fileStream;
+  int position[5], win;
+  int rowX3[15];
 
   cout << setprecision(2) << fixed;
 
   srand(time(NULL));
 
-  if(u.plik_b){
+  if(u.file_b){
     try {
-      file.open (u.plik);
-      if (file.fail()) throw u.plik;
+      fileStream.open(u.file);
+      if (fileStream.fail()) throw u.file;
     } catch (string e) {
-      blad("Nie można otworzyć pliku: "+e+"\n");
+      error("Cannot open file: " + e + "\n");
     }
   }
 
   for (size_t i = 0; i < 5; i++) {
-    for (size_t j = 0; j < DB+2; j++) {
-      if(j==0) b2[i][DB+2] = beben[i][0];
-      else if(j==DB+2) b2[i][0] = beben[i][DB];
-      else b2[i][j] = beben[i][j-1];
+    for (size_t j = 0; j < DB + 2; j++) {
+      if(j == 0) b2[i][DB + 2] = beben[i][0];
+      else if(j == DB + 2) b2[i][0] = beben[i][DB];
+      else b2[i][j] = beben[i][j - 1];
     }
   }
 
-  cout<<"Gier: "<<u.gier<<", Stawka: "<<u.stawka<<", Kredyt: "<<u.kredyt<<"\n";
+  cout << "Games: " << u.games << ", Bet: " << u.bet << ", Credit: " << u.credit << "\n";
 
-  for (int i = 0; i < u.gier; i++) {
-    razem += u.stawka;
-    u.kredyt -= u.stawka;
+  for (int i = 0; i < u.games; i++) {
+    total += u.bet;
+    u.credit -= u.bet;
 
-    // wylosowanie pozycji na 5-ciu bębnach
-    for (size_t j = 0; j < 5; j++) pozycja[j] = rand()%DB;
+    // draw positions on 5 reels
+    for (size_t j = 0; j < 5; j++) position[j] = rand() % DB;
 
-    // utworzenie wiersza składającego się z trzech (k) wierszy i 5 bębnów
-    for (size_t k=-1, j = 0; j < 15; j++) {
-      if(j%10==0 || j%5==0) k++;
-      u.b5x3[j] = u.znak[b2[j%5][pozycja[j%5]+k]];
+    // create a row consisting of three (k) rows and 5 reels
+    for (size_t k = -1, j = 0; j < 15; j++) {
+      if(j % 10 == 0 || j % 5 == 0) k++;
+      u.b5x3[j] = u.symbol[b2[j % 5][position[j % 5] + k]];
     }
 
-    wygrana = obliczWygrana();
+    win = calculateWin();
 
-    if(u.plik_b){
-      if(u.bufor){
-        ss<<i<<",";
-        for (size_t j = 0; j < 15; j++) ss<<u.b5x3[tp2[j]]<<",";
-        ss<<u.kredyt<<","<<wygrana<<endl;
-        if(i%u.bufor) {
-          file<<ss.str();
+    if(u.file_b){
+      if(u.buffer){
+        ss << i << ",";
+        for (size_t j = 0; j < 15; j++) ss << u.b5x3[tp2[j]] << ",";
+        ss << u.credit << "," << win << endl;
+        if(i % u.buffer) {
+          fileStream << ss.str();
           ss.str("");
         }
       } else {
-        ss<<i<<", ";
-        for (size_t j = 0; j < 15; j++) ss<<u.b5x3[tp2[j]]<<",";
-        ss<<u.kredyt<<","<<wygrana<<endl;
-        file<<ss.str();
+        ss << i << ", ";
+        for (size_t j = 0; j < 15; j++) ss << u.b5x3[tp2[j]] << ",";
+        ss << u.credit << "," << win << endl;
+        fileStream << ss.str();
         ss.str("");
       }
     }
-
   }
 
-  if(u.plik_b && u.bufor) file<<ss.str();
+  if(u.file_b && u.buffer) fileStream << ss.str();
 
-  cout<<"Postawione: "<<razem<<", Wygrane: "<<wygranych<<", Bilans: "<<u.kredyt<<"\n";
-  cout<<"Ilość wygranych:\n\t[x1]\t[x2]\t[x3]\t[x4]\t[x5]\n";
-  for (int i=0; i < 8; i++) cout<<i<<":\t"<<wygrane[i][0]<<",\t"<<wygrane[i][1]
-    <<",\t"<<wygrane[i][2]<<",\t"<<wygrane[i][3]<<",\t"<<wygrane[i][4]<<"\n";
-  cout<<"RTP: "<<(100.0*wygranych/razem)<<"\n";
-  cout<<"HF: "<<(100.0*hf/u.gier)<<"\n";
+  cout << "Total Bet: " << total << ", Total Wins: " << totalWins << ", Balance: " << u.credit << "\n";
+  cout << "Number of Wins:\n\t[x1]\t[x2]\t[x3]\t[x4]\t[x5]\n";
+  for (int i = 0; i < 8; i++) cout << i << ":\t" << wins[i][0] << ",\t" << wins[i][1]
+    << ",\t" << wins[i][2] << ",\t" << wins[i][3] << ",\t" << wins[i][4] << "\n";
+  cout << "RTP: " << (100.0 * totalWins / total) << "\n";
+  cout << "HF: " << (100.0 * hf / u.games) << "\n";
 
-  if(u.plik_b) file.close();
+  if(u.file_b) fileStream.close();
 }
 
-int obliczWygrana(){
-  int wygrana = 0, razem = 0, i = 0;
+int calculateWin(){
+  int win = 0, totalWin = 0, i = 0;
   bool hit = false;
-  trafien=0;
+  hits = 0;
 
-  //obliczenie wygranej dla symbolu specjalnego 7
-  wygrywa = 7;
+  // calculate win for special symbol 7
+  winner = 7;
 
   for (size_t i = 0; i < 15; i++) {
-    if(u.b5x3[i]==wygrywa) trafien++;
-    if(trafien > 4) break; // dalej już nie musimy liczyć bo więcej trafień
-                           // nie przewidujemy
+    if(u.b5x3[i] == winner) hits++;
+    if(hits > 4) break; // no need to count further, we do not expect more hits
   }
 
-  if( trafien > 0 ) // jeżeli jest choć jedno trafienie
-  if(--trafien > 1){// zmniejsz o jeden aby odczytać właściwą wartość z tabeli
-    wygrana = stawki[wygrywa][trafien];
-    razem = wygrana;
-    wygranych += wygrana;
-    u.kredyt += wygrana;
-    wygrane[wygrywa][trafien]++;
+  if(hits > 0) // if there is at least one hit
+  if(--hits > 1){ // decrease by one to read the correct value from the table
+    win = stawki[winner][hits];
+    totalWin = win;
+    totalWins += win;
+    u.credit += win;
+    wins[winner][hits]++;
     hit = true;
   }
 
-
   for (size_t i = 0; i < 20; i++) {
-    // wygrywa zawsze pierwszy w 20-stu układach
-    wygrywa = u.b5x3[w20[i][0]];
-    if(wygrywa == 7) break; // ten symbol "7" już był liczony
-    trafien=0;
+    // always the first one wins in 20 layouts
+    winner = u.b5x3[w20[i][0]];
+    if(winner == 7) break; // this symbol "7" has already been counted
+    hits = 0;
 
-    // zliczenie ile razy ten pierwszy się powtórzy
-    for (size_t j=1; j < 5; j++) {
-      if(u.b5x3[w20[i][j]]==wygrywa) trafien++;
-      else break; // jeżeli znak jest inny to dalej nie sprawdzamy
+    // count how many times the first one repeats
+    for (size_t j = 1; j < 5; j++) {
+      if(u.b5x3[w20[i][j]] == winner) hits++;
+      else break; // if the symbol is different, do not check further
     }
 
-    // jeżeli 0 wystąpi choć dwa razy to już jest "wygrana"
-    // pozostałe znaki muszą wystąpić co najmniej 3 razy
-    if((wygrywa==0 && trafien==1) || trafien>1) {
-      wygrana = stawki[wygrywa][trafien];
-      razem += wygrana;
-      wygranych += wygrana;
-      u.kredyt += wygrana;
-      wygrane[wygrywa][trafien]++;
+    // if 0 occurs at least twice it is already a "win"
+    // other symbols must occur at least 3 times
+    if((winner == 0 && hits == 1) || hits > 1) {
+      win = stawki[winner][hits];
+      totalWin += win;
+      totalWins += win;
+      u.credit += win;
+      wins[winner][hits]++;
       hit = true;
     }
   }
 
-  // nawet kilka trafień traktujemy jak jedną wygraną
+  // even several hits are treated as one win
   if(hit) hf++;
 
-  return razem;
+  return totalWin;
 };
 
-void split( const string s1, const string s2 )
-{
+void split(const string s1, const string s2) {
     regex re(s2);
-    copy( sregex_token_iterator(s1.begin(), s1.end(), re, -1),
-       sregex_token_iterator(), back_inserter(u.symbole));
+    copy(sregex_token_iterator(s1.begin(), s1.end(), re, -1),
+       sregex_token_iterator(), back_inserter(u.symbols));
 };
 
 int main(int argc , char **argv){
-  enum argument {gier=1, kredyt, plik, bufor, symbole};
-  map<string, argument> argumenty;
+  enum argument {games = 1, credit, file, buffer, symbols};
+  map<string, argument> arguments;
 
   auto start = chrono::high_resolution_clock::now();
 
   int k, tab[15];
 
-  if((argc % 2)==1){
+  if((argc % 2) == 1){
 
-    argumenty[GIER]     = gier;
-    argumenty[KREDYT]   = kredyt;
-    argumenty[PLIK]     = plik;
-    argumenty[BUFOR]    = bufor;
-    argumenty[SYMBOLE]  = symbole;
+    arguments[GAMES]    = games;
+    arguments[CREDIT]   = credit;
+    arguments[FILE_ARG] = file;
+    arguments[BUFFER]   = buffer;
+    arguments[SYMBOLS]  = symbols;
 
-    for (int liczba, i = 1; i < argc; i+=2) {
+    for (int number, i = 1; i < argc; i += 2) {
 
-      switch( argumenty[argv[i]] ){
-        case gier:
-          liczba = atoi(argv[i+1]);
-          if(liczba<=0) blad("Gier musi być więcej niż 0, podałeś "s+argv[i+1]+"\n");
-          else u.gier = liczba;
+      switch(arguments[argv[i]]){
+        case games:
+          number = atoi(argv[i + 1]);
+          if(number <= 0) error("Games must be more than 0, you provided "s + argv[i + 1] + "\n");
+          else u.games = number;
           break;
 
-        case kredyt:
-          liczba = atoi(argv[i+1]);
-          if(liczba<=0) blad("Kredyt musi być większy niż 0, podałeś "s+argv[i+1]+"\n");
-          else u.kredyt = liczba;
+        case credit:
+          number = atoi(argv[i + 1]);
+          if(number <= 0) error("Credit must be more than 0, you provided "s + argv[i + 1] + "\n");
+          else u.credit = number;
           break;
 
-        case plik:
-          u.plik =  argv[i+1];
-          u.plik_b = true;
+        case file:
+          u.file = argv[i + 1];
+          u.file_b = true;
           break;
 
-        case bufor:
-          liczba = atoi(argv[i+1]);
-          if(liczba<=0) blad("Bufor musi być liczbą naturalną, podałeś "s+argv[i+1]+"\n");
-          else u.bufor = liczba;
+        case buffer:
+          number = atoi(argv[i + 1]);
+          if(number <= 0) error("Buffer must be a natural number, you provided "s + argv[i + 1] + "\n");
+          else u.buffer = number;
           break;
 
-        case symbole:
-          split(argv[i+1], "[,]+");
+        case symbols:
+          split(argv[i + 1], "[,]+");
 
-          liczba = u.symbole.size();
+          number = u.symbols.size();
 
-          if(liczba!=15)
-            blad("Wektor musi zawierać 15 cyfr, zawiera "s+to_string(liczba)+"\n");
+          if(number != 15)
+            error("Vector must contain 15 digits, contains "s + to_string(number) + "\n");
 
-          liczba = 0;
+          number = 0;
           k = 0;
 
-          for(auto j: u.symbole) {
-            liczba = stoi(j);
-            if((liczba<0) || (liczba>7))
-              blad("Wartość wektora jest poza zakresem\nPozycja: "s
-                +to_string(k)+", wartość: "+to_string(liczba)+"\n");
-            else tab[k++] = liczba;
+          for(auto j: u.symbols) {
+            number = stoi(j);
+            if((number < 0) || (number > 7))
+              error("Vector value is out of range\nPosition: "s + to_string(k) + ", value: " + to_string(number) + "\n");
+            else tab[k++] = number;
           }
 
-          //uporządkowanie w kolejności potrzebnej do wyliczenia wygranej
+          // arrange in the order needed to calculate the win
           for (size_t i = 0; i < 15; i++) u.b5x3[i] = tab[tp1[i]];
 
-          cout << obliczWygrana() << endl;
+          cout << calculateWin() << endl;
           return 0;
           break;
 
         default:
-          blad("Nieznany argument: "s+argv[i]+"\nPrzykład uruchomienia:\n"
-            +argv[0]+" "+GIER+" 100000 "+KREDYT+" 500000 "+PLIK+" plik.txt\n");
+          error("Unknown argument: "s + argv[i] + "\nExample usage:\n"
+            + argv[0] + " " + GAMES + " 100000 " + CREDIT + " 500000 " + FILE_ARG + " file.txt\n");
           break;
         }
       }
 
     } else {
-      blad("Podaj poprawną ilość argumentów\nPrzykład uruchomienia:\n"s
-        +argv[0]+" "+GIER+" 100000 "+KREDYT+" 500000 "+PLIK+" plik.txt\n");
+      error("Provide the correct number of arguments\nExample usage:\n"s
+        + argv[0] + " " + GAMES + " 100000 " + CREDIT + " 500000 " + FILE_ARG + " file.txt\n");
   }
 
-  graj();
+  play();
 
   auto stop = chrono::high_resolution_clock::now();
-  auto czas = chrono::duration_cast<chrono::milliseconds>(stop-start).count();
-  cout << "Czas wykonania programu : " << (czas/1000.0) << "s\n";
+  auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start).count();
+  cout << "Program execution time: " << (duration / 1000.0) << "s\n";
 
   return 0;
 }
