@@ -8,7 +8,7 @@
 #include <filesystem>
 #include <string>
 #include <map>
-#include "automatDoGier.hpp"
+#include "slotmachine.hpp"
 
 #define SYMBOLS "-symbols"
 #define CREDIT  "-credit"
@@ -54,9 +54,9 @@ void play(){
 
   for (size_t i = 0; i < 5; i++) {
     for (size_t j = 0; j < DB + 2; j++) {
-      if(j == 0) b2[i][DB + 2] = beben[i][0];
-      else if(j == DB + 2) b2[i][0] = beben[i][DB];
-      else b2[i][j] = beben[i][j - 1];
+      if(j == 0) reels2[i][DB + 2] = reel[i][0];
+      else if(j == DB + 2) reels2[i][0] = reel[i][DB];
+      else reels2[i][j] = reel[i][j - 1];
     }
   }
 
@@ -72,7 +72,7 @@ void play(){
     // create a row consisting of three (k) rows and 5 reels
     for (size_t k = -1, j = 0; j < 15; j++) {
       if(j % 10 == 0 || j % 5 == 0) k++;
-      u.b5x3[j] = u.symbol[b2[j % 5][position[j % 5] + k]];
+      u.b5x3[j] = u.symbol[reels2[j % 5][position[j % 5] + k]];
     }
 
     win = calculateWin();
@@ -123,7 +123,7 @@ int calculateWin(){
 
   if(hits > 0) // if there is at least one hit
   if(--hits > 1){ // decrease by one to read the correct value from the table
-    win = stawki[winner][hits];
+    win = payouts[winner][hits];
     totalWin = win;
     totalWins += win;
     u.credit += win;
@@ -133,20 +133,20 @@ int calculateWin(){
 
   for (size_t i = 0; i < 20; i++) {
     // always the first one wins in 20 layouts
-    winner = u.b5x3[w20[i][0]];
+    winner = u.b5x3[win20[i][0]];
     if(winner == 7) break; // this symbol "7" has already been counted
     hits = 0;
 
     // count how many times the first one repeats
     for (size_t j = 1; j < 5; j++) {
-      if(u.b5x3[w20[i][j]] == winner) hits++;
+      if(u.b5x3[win20[i][j]] == winner) hits++;
       else break; // if the symbol is different, do not check further
     }
 
     // if 0 occurs at least twice it is already a "win"
     // other symbols must occur at least 3 times
     if((winner == 0 && hits == 1) || hits > 1) {
-      win = stawki[winner][hits];
+      win = payouts[winner][hits];
       totalWin += win;
       totalWins += win;
       u.credit += win;
