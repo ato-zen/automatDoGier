@@ -1,46 +1,42 @@
-# Automat do gier
-Automat do gier, jednoręki bandyta, 777
+# Slot Machine
+Slot Machine, one-armed bandit, 777
 
-Automat do gier jest wersją gry [jednorekibandyta](https://github.com/ato-zen/jednoreki-bandyta) napisaną w C++ z dwudziestoma liniami wygrywającymi.  
-"Gra" losuje domyślnie 100 tysięcy wierszy na pięciu bębnach spośród ośmiu symboli/cyfr.
+The slot machine is a version of the game written in C++ with twenty winning lines.  
+The "game" defaults to drawing 100 thousand rows on five reels from eight symbols/digits.
 
-Stawka wynosi 100, kredyt 500 tysięcy
+The bet is 100, and the credit is 500 thousand.
 
+All draws and the changing credit value can be saved to a file using the `-file` option.
 
-Wszystkie losowania i zmieniającą się wartość kredytu można zapisać do pliku używając opcji `-plik`
+The return to player (RTP) is at the level of 96%.
 
-Stosunek zwrotu jest na poziomie 96%.
+The hit frequency (HF) is 30%.
 
-Częstotliwość trafień wynosi 30%.
+**Compilation:**
 
+`c++ slotmachine.cpp -o slotmachine --std=c++17`
 
+**Execution:**
 
-**Kompilacja:**
+`./slotmachine`
 
-`c++ automatDoGier.cpp -o automatDoGier --std=c++17`
+or
 
-**Uruchomienie:**
+`./slotmachine -games 100000 -credit 500000 -file file.txt -buffer 1000`
 
-`./automatDoGier`
+or
 
-lub
+`./slotmachine -symbols 4,4,6,0,3,6,6,6,6,6,3,2,6,7,4`
 
-`./automatDoGier -gier 100000 -kredyt 500000 -plik plik.txt -bufor 1000`
-
-lub
-
-`./automatDoGier -symbole 4,4,6,0,3,6,6,6,6,6,3,2,6,7,4`
-
-wykonanie polecenia poda wygraną za układ:
+Executing the command will provide the win for the layout:
 
 `4,4,6,0,3`  
 `6,6,6,6,6`  
 `3,2,6,7,4`
 
-
 ![Wyniki gry](https://github.com/ato-zen/automatDoGier/blob/main/wyniki.png)
 
-Przykładowy stan kredytu dla kilku tysięcy gier
+Example credit status for several thousand games
 
 ![Stan kredytu podczas rozgrywki](https://github.com/ato-zen/automatDoGier/blob/main/kredyt.png)
 
